@@ -29,7 +29,7 @@ private:
     double low;
     double weight;
 
-    Calculator(double low, double high, double weight);
+    Calculator(double high, double low, double weight);
     double operator()(double value) const;
   };
 
