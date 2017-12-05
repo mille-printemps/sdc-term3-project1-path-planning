@@ -17,7 +17,7 @@ const double Lane::PREFERRED_DISTANCE_BUFFER = 27;
 const double Lane::VELOCITY_WARNING_BUFFER = 17;
 const double Lane::LANE_MARGIN = 2.5;
 
-const double Lane::Calculator::UPPER_LIMIT = 4.0;
+const double Lane::Calculator::UPPER_LIMIT = 6.0;
 const double Lane::Calculator::LOWER_LIMIT = -UPPER_LIMIT;
 
 // Cost calculator implementation
@@ -44,7 +44,7 @@ d_(LANE_WIDTH/2.0 + LANE_WIDTH * id),
 velocity_cost_(50, 25, 5),
 front_buffer_cost_(80, 30, 8),
 side_back_buffer_cost_(15, 0, 60),
-collision_cost_(-10, 0, 60) {
+collision_cost_(0, -10, 60) {
 }
 
 Lane::~Lane() {
@@ -55,10 +55,8 @@ Lane::~Lane() {
 void Lane::Evaluate(Vehicle::State current, std::vector<Vehicle::State> detected) {
   
   Vehicle::State* front = 0;
-  Vehicle::State* side_front = 0;
   Vehicle::State* side_back = 0;
   double min_front_buffer = numeric_limits<double>::max();
-  double min_side_front_buffer = numeric_limits<double>::max();
   double min_back_buffer = numeric_limits<double>::max();
   double block_cost = 0;
   velocity_ = max_velocity_;
@@ -82,9 +80,9 @@ void Lane::Evaluate(Vehicle::State current, std::vector<Vehicle::State> detected
     }
   }
   
-  double front_buffer = numeric_limits<double>::min();
-  double side_back_buffer = numeric_limits<double>::min();
-  double back_velocity_difference = numeric_limits<double>::max();
+  double front_buffer = numeric_limits<double>::max();
+  double side_back_buffer = numeric_limits<double>::max();
+  double back_velocity_difference = numeric_limits<double>::min();
   double front_velocity = max_velocity_;
   
   if (front != 0) {

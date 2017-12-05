@@ -15,8 +15,8 @@ const double Planner::MIN_VELOCITY = 20;
 const double Planner::INITIAL_LANE = 1;
   
 const double Planner::MIN_LANE_CHANGE_COST_DIFFERENCE = 0.5;
-const double Planner::MAX_LANE_CHANGE_COST = 10.0;
-const double Planner::MIN_LANE_CHANGE_VELOCITY = 34.0;
+const double Planner::MAX_LANE_CHANGE_COST = 11.0;
+const double Planner::MIN_LANE_CHANGE_VELOCITY = 37.0;
 const double Planner::SAFE_DISTANCE_BUFFER = 15;
 const double Planner::SAFE_WIDTH_BUFFER = 3;
 
