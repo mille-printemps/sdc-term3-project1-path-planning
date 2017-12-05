@@ -25,8 +25,8 @@ private:
   static const double MIN_LANE_CHANGE_COST_DIFFERENCE;
   static const double MAX_LANE_CHANGE_COST;
   static const double MIN_LANE_CHANGE_VELOCITY;
-  static const double PREFERRED_DISTANCE_BUFFER;
-  static const double PREFERRED_WIDTH_BUFFER;
+  static const double SAFE_DISTANCE_BUFFER;
+  static const double SAFE_WIDTH_BUFFER;
   static const double MAX_VELOCITY;
   static const double MIN_VELOCITY;
   static const double INITIAL_LANE;

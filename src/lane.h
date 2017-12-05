@@ -39,9 +39,8 @@ private:
   static const double BACK_BUFFER_END;
   static const double SIDE_BUFFER_START;
   static const double SIDE_BUFFER_END;
-
-  static const double VELOCITY_LIMIT_BUFFER;
-  static const double STOP_BUFFER;
+  static const double PREFERRED_DISTANCE_BUFFER;
+  static const double VELOCITY_WARNING_BUFFER;
   static const double LANE_MARGIN;
 
   int id_;
@@ -55,7 +54,7 @@ private:
 
   Calculator velocity_cost_;
   Calculator front_buffer_cost_;
-  Calculator back_buffer_cost_;
+  Calculator side_back_buffer_cost_;
   Calculator collision_cost_;
 
   bool Detects(Vehicle::State state) const;

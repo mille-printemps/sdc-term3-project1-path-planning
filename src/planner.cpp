@@ -1,5 +1,4 @@
 #include <iostream>
-#include <algorithm>
 #include <cmath>
 #include <vector>
 #include "planner.h"
@@ -16,11 +15,10 @@ const double Planner::MIN_VELOCITY = 20;
 const double Planner::INITIAL_LANE = 1;
   
 const double Planner::MIN_LANE_CHANGE_COST_DIFFERENCE = 0.5;
-const double Planner::MAX_LANE_CHANGE_COST = 40.0;
-const double Planner::MIN_LANE_CHANGE_VELOCITY = 37.0;
-
-const double Planner::PREFERRED_DISTANCE_BUFFER = 15;
-const double Planner::PREFERRED_WIDTH_BUFFER = 3;
+const double Planner::MAX_LANE_CHANGE_COST = 10.0;
+const double Planner::MIN_LANE_CHANGE_VELOCITY = 34.0;
+const double Planner::SAFE_DISTANCE_BUFFER = 15;
+const double Planner::SAFE_WIDTH_BUFFER = 3;
 
 // Constructors and destructor
 
@@ -80,7 +78,7 @@ void Planner::MayChangeLane(Vehicle::State current) {
   } else {
     Lane* min_cost_lane = 0;
     for (auto lane : current_lane_->adjacencies()) {
-      if (min_cost_lane == 0 || lane->cost() < current_lane_->cost()) {
+      if (min_cost_lane == 0 || lane->cost() < min_cost_lane->cost()) {
         min_cost_lane = lane;
       }
     }
@@ -104,9 +102,9 @@ void Planner::UpdateTrajectory(Vehicle::State current,
                                vector<double>& next_x_vals,
                                vector<double>& next_y_vals) {
   
-  current.target_v = target_lane_ == 0 ? current_lane_->velocity() : current_lane_->velocity() * 0.3 + target_lane_->velocity() * 0.7;
+  current.target_v = target_lane_ == 0 ? current_lane_->velocity() : current_lane_->velocity() * 0.2 + target_lane_->velocity() * 0.8;
   current.target_lane = target_lane_ == 0 ? current_lane_->id() : target_lane_->id();
-  current.target_v = min(current.target_v, MaySlowDown(current, sensor_inputs));
+  // current.target_v = min(current.target_v, MaySlowDown(current, sensor_inputs));
   
   vehicle_.UpdateTragectory(current, previous_path_x, previous_path_y, next_x_vals, next_y_vals);
 }
@@ -115,12 +113,12 @@ double Planner::MaySlowDown(Vehicle::State current, vector<Vehicle::State> senso
   double velocity = MAX_VELOCITY;
   for (auto& other : sensor_inputs) {
     double distance = other.s - current.s;
-    if (distance < 0 || PREFERRED_DISTANCE_BUFFER < distance) {
+    if (distance < 0 || SAFE_DISTANCE_BUFFER < distance) {
       continue;
     }
     
     double width = other.d - current.d;
-    if (PREFERRED_WIDTH_BUFFER < width) {
+    if (SAFE_WIDTH_BUFFER < width) {
       continue;
     }
     
