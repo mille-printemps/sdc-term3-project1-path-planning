@@ -112,7 +112,7 @@ bool Lane::isSafe(Vehicle::State current, vector<Vehicle::State> sensor_inputs) 
   bool safe = true;
   for (auto& other : sensor_inputs) {
     if (Accommodates(other)) {
-      if (SAFE_DISTANCE_BUFFER < abs(other.s - current.s) && SAFE_WIDTH_BUFFER < abs(other.d - current.d)) {
+      if (SAFE_DISTANCE_BUFFER < abs(other.s - current.s)) {
         continue;
       }
 
