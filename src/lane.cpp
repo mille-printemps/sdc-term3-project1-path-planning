@@ -9,7 +9,7 @@ const double Lane::LANE_WIDTH = 4.0; // in meters
 
 const double Lane::FRONT_BUFFER_START = 120.0;
 const double Lane::FRONT_BUFFER_END = 0.0;
-const double Lane::BACK_BUFFER_START = 30.;
+const double Lane::BACK_BUFFER_START = 30.0;
 const double Lane::BACK_BUFFER_END = -12.5;
 const double Lane::SIDE_BUFFER_START = 8.0;
 const double Lane::SIDE_BUFFER_END = -8.0;
@@ -86,7 +86,7 @@ void Lane::Evaluate(Vehicle::State current, std::vector<Vehicle::State> sensor_i
   // Use the default values to calculate the cost if there are no vehicles ahead and behind within the range
   double front_buffer = numeric_limits<double>::max();
   double side_back_buffer = numeric_limits<double>::max();
-  double back_velocity_difference = numeric_limits<double>::min();
+  double back_velocity_difference = numeric_limits<double>::max();
   double front_velocity = max_velocity_;
   
   if (front != 0) {
