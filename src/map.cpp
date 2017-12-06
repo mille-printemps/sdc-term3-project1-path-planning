@@ -53,7 +53,6 @@ Map::Frenet Map::GetFrenet(double x, double y, double theta) {
   double frenet_d = Distance(x_x, x_y, proj_x, proj_y);
 
   //see if d value is positive or negative by comparing it to a center point
-
   double center_x = 1000 - waypoints_x_[prev_wp];
   double center_y = 2000 - waypoints_y_[prev_wp];
   double centerToPos = Distance(center_x, center_y, x_x, x_y);

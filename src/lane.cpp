@@ -7,17 +7,18 @@ using namespace std;
 
 const double Lane::LANE_WIDTH = 4.0; // in meters
 
-const double Lane::FRONT_BUFFER_START = 120;
-const double Lane::FRONT_BUFFER_END = 0;
-const double Lane::BACK_BUFFER_START = 30;
+const double Lane::FRONT_BUFFER_START = 120.0;
+const double Lane::FRONT_BUFFER_END = 0.0;
+const double Lane::BACK_BUFFER_START = 30.;
 const double Lane::BACK_BUFFER_END = -12.5;
-const double Lane::SIDE_BUFFER_START = 8;
-const double Lane::SIDE_BUFFER_END = -8;
-const double Lane::PREFERRED_DISTANCE_BUFFER = 27;
-const double Lane::VELOCITY_WARNING_BUFFER = 15;
+const double Lane::SIDE_BUFFER_START = 8.0;
+const double Lane::SIDE_BUFFER_END = -8.0;
+const double Lane::PREFERRED_DISTANCE_BUFFER = 27.0;
+const double Lane::VELOCITY_WARNING_BUFFER = 15.0;
 const double Lane::LANE_MARGIN = 2.5;
-const double Lane::SAFE_DISTANCE_BUFFER = 27;
-const double Lane::SAFE_WIDTH_BUFFER = 3;
+const double Lane::SAFE_DISTANCE_BUFFER = 27.0;
+const double Lane::SAFE_WIDTH_BUFFER = 3.0;
+const double Lane::BLOCK_COST = 20.0;
 
 const double Lane::Calculator::UPPER_LIMIT = 6.0;
 const double Lane::Calculator::LOWER_LIMIT = -UPPER_LIMIT;
@@ -55,7 +56,6 @@ Lane::~Lane() {
 // Public methods
 
 void Lane::Evaluate(Vehicle::State current, std::vector<Vehicle::State> sensor_inputs) {
-  
   Vehicle::State* front = 0;
   Vehicle::State* side_back = 0;
   double min_front_buffer = numeric_limits<double>::max();
@@ -63,6 +63,7 @@ void Lane::Evaluate(Vehicle::State current, std::vector<Vehicle::State> sensor_i
   double block_cost = 0;
   velocity_ = max_velocity_;
 
+  // Check status of the other vehicles on the same lane and the other lanes.
   for (auto& other : sensor_inputs) {
     if (Detects(other)) {
       double buffer = other.s - current.s;
@@ -77,11 +78,12 @@ void Lane::Evaluate(Vehicle::State current, std::vector<Vehicle::State> sensor_i
       }
       
       if (!Detects(current) && SIDE_BUFFER_END < buffer && buffer < SIDE_BUFFER_START ) {
-        block_cost = 20.0;
+        block_cost = BLOCK_COST;
       }
     }
   }
   
+  // Use the default values to calculate the cost if there are no vehicles ahead and behind within the range
   double front_buffer = numeric_limits<double>::max();
   double side_back_buffer = numeric_limits<double>::max();
   double back_velocity_difference = numeric_limits<double>::min();
@@ -109,6 +111,7 @@ void Lane::Evaluate(Vehicle::State current, std::vector<Vehicle::State> sensor_i
 }
 
 bool Lane::isSafe(Vehicle::State current, vector<Vehicle::State> sensor_inputs) {
+  // Does a sanitary check to see if the vehicle can move to the lane
   bool safe = true;
   for (auto& other : sensor_inputs) {
     if (Accommodates(other)) {

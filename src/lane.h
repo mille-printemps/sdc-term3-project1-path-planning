@@ -6,7 +6,7 @@
 
 class Lane {
 public:
-  static const double LANE_WIDTH; // in meters
+  static const double LANE_WIDTH;
 
   Lane(int id, double max_velocity, double min_velocity);
   ~Lane();
@@ -45,6 +45,7 @@ private:
   static const double LANE_MARGIN;
   static const double SAFE_DISTANCE_BUFFER;
   static const double SAFE_WIDTH_BUFFER;
+  static const double BLOCK_COST;
 
   int id_;
   double max_velocity_;
