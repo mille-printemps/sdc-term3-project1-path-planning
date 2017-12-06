@@ -11,10 +11,10 @@ using namespace util;
 
 const int Vehicle::NUMBER_OF_POINTS = 50;
 const int Vehicle::POINTS_AHEAD = 3;
-const double Vehicle::POINT_INTERVAL = 30.0; // in meters
+const double Vehicle::POINT_INTERVAL = 35.0; // in meters
 const double Vehicle::TIME_INTERVAL = 0.02;  // in seconds
-const double Vehicle::LANE_CHANGE_RATE = 0.02;
-const double Vehicle::ACCELERATION = 0.2; // 0.275;
+const double Vehicle::LANE_CHANGE_RATE = 0.01;
+const double Vehicle::ACCELERATION = 0.28;
 
 // Constructors and destructor
 

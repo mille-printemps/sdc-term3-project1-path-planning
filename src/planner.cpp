@@ -11,14 +11,12 @@ using namespace std;
 // Constants
 
 const double Planner::MAX_VELOCITY = 49;
-const double Planner::MIN_VELOCITY = 20;
+const double Planner::MIN_VELOCITY = 30;
 const double Planner::INITIAL_LANE = 1;
   
 const double Planner::MIN_LANE_CHANGE_COST_DIFFERENCE = 0.5;
-const double Planner::MAX_LANE_CHANGE_COST = 11.0;
-const double Planner::MIN_LANE_CHANGE_VELOCITY = 37.0;
-const double Planner::SAFE_DISTANCE_BUFFER = 15;
-const double Planner::SAFE_WIDTH_BUFFER = 3;
+const double Planner::MAX_LANE_CHANGE_COST = 5.5;
+const double Planner::MIN_LANE_CHANGE_VELOCITY = 38.5;
 
 // Constructors and destructor
 
@@ -49,7 +47,7 @@ void Planner::Maneuver(Vehicle::State current,
   
   vector<Vehicle::State> sensor_inputs = GetSensorInputs(sensor_fusion);
   EvaluateSensorInputs(current, sensor_inputs);
-  MayChangeLane(current);
+  MayChangeLane(current, sensor_inputs);
   UpdateTrajectory(current, sensor_inputs, previous_path_x, previous_path_y, next_x_vals, next_y_vals);
 }
 
@@ -71,7 +69,7 @@ void Planner::EvaluateSensorInputs(Vehicle::State current, vector<Vehicle::State
   }
 }
 
-void Planner::MayChangeLane(Vehicle::State current) {
+void Planner::MayChangeLane(Vehicle::State current, vector<Vehicle::State> sensor_inputs) {
   if (target_lane_ != 0 && target_lane_->Accommodates(current)) {
       current_lane_ = target_lane_;
       target_lane_ = 0;
@@ -87,7 +85,8 @@ void Planner::MayChangeLane(Vehicle::State current) {
     cout << current.v << endl;
     cout << endl;
     
-    if (min_cost_lane->cost() < MAX_LANE_CHANGE_COST &&
+    if (min_cost_lane->isSafe(current, sensor_inputs) &&
+        min_cost_lane->cost() < MAX_LANE_CHANGE_COST &&
         MIN_LANE_CHANGE_COST_DIFFERENCE  <= current_lane_->cost() - min_cost_lane->cost() &&
         MIN_LANE_CHANGE_VELOCITY < current.v) {
       target_lane_ = min_cost_lane;
@@ -102,29 +101,10 @@ void Planner::UpdateTrajectory(Vehicle::State current,
                                vector<double>& next_x_vals,
                                vector<double>& next_y_vals) {
   
-  current.target_v = target_lane_ == 0 ? current_lane_->velocity() : current_lane_->velocity() * 0.2 + target_lane_->velocity() * 0.8;
+  current.target_v = target_lane_ == 0 ? current_lane_->velocity() : current_lane_->velocity() * 0.3 + target_lane_->velocity() * 0.7;
   current.target_lane = target_lane_ == 0 ? current_lane_->id() : target_lane_->id();
-  // current.target_v = min(current.target_v, MaySlowDown(current, sensor_inputs));
   
   vehicle_.UpdateTragectory(current, previous_path_x, previous_path_y, next_x_vals, next_y_vals);
 }
 
-double Planner::MaySlowDown(Vehicle::State current, vector<Vehicle::State> sensor_inputs) {
-  double velocity = MAX_VELOCITY;
-  for (auto& other : sensor_inputs) {
-    double distance = other.s - current.s;
-    if (distance < 0 || SAFE_DISTANCE_BUFFER < distance) {
-      continue;
-    }
-    
-    double width = other.d - current.d;
-    if (SAFE_WIDTH_BUFFER < width) {
-      continue;
-    }
-    
-    velocity = MIN_VELOCITY;
-    break;
-  }
-  return velocity;
-}
 

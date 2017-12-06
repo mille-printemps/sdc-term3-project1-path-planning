@@ -9,13 +9,15 @@ const double Lane::LANE_WIDTH = 4.0; // in meters
 
 const double Lane::FRONT_BUFFER_START = 120;
 const double Lane::FRONT_BUFFER_END = 0;
-const double Lane::BACK_BUFFER_START = 15;
+const double Lane::BACK_BUFFER_START = 30;
 const double Lane::BACK_BUFFER_END = -12.5;
 const double Lane::SIDE_BUFFER_START = 8;
 const double Lane::SIDE_BUFFER_END = -8;
 const double Lane::PREFERRED_DISTANCE_BUFFER = 27;
-const double Lane::VELOCITY_WARNING_BUFFER = 17;
+const double Lane::VELOCITY_WARNING_BUFFER = 15;
 const double Lane::LANE_MARGIN = 2.5;
+const double Lane::SAFE_DISTANCE_BUFFER = 27;
+const double Lane::SAFE_WIDTH_BUFFER = 3;
 
 const double Lane::Calculator::UPPER_LIMIT = 6.0;
 const double Lane::Calculator::LOWER_LIMIT = -UPPER_LIMIT;
@@ -42,8 +44,8 @@ max_velocity_(max_velocity),
 min_velocity_(min_velocity),
 d_(LANE_WIDTH/2.0 + LANE_WIDTH * id),
 velocity_cost_(50, 25, 5),
-front_buffer_cost_(80, 30, 8),
-side_back_buffer_cost_(15, 0, 60),
+front_buffer_cost_(70, 10, 10),
+side_back_buffer_cost_(30, 0, 90),
 collision_cost_(0, -10, 60) {
 }
 
@@ -52,7 +54,7 @@ Lane::~Lane() {
 
 // Public methods
 
-void Lane::Evaluate(Vehicle::State current, std::vector<Vehicle::State> detected) {
+void Lane::Evaluate(Vehicle::State current, std::vector<Vehicle::State> sensor_inputs) {
   
   Vehicle::State* front = 0;
   Vehicle::State* side_back = 0;
@@ -61,7 +63,7 @@ void Lane::Evaluate(Vehicle::State current, std::vector<Vehicle::State> detected
   double block_cost = 0;
   velocity_ = max_velocity_;
 
-  for (auto& other : detected) {
+  for (auto& other : sensor_inputs) {
     if (Detects(other)) {
       double buffer = other.s - current.s;
       if (FRONT_BUFFER_END < buffer && buffer < FRONT_BUFFER_START && buffer < min_front_buffer) {
@@ -104,6 +106,21 @@ void Lane::Evaluate(Vehicle::State current, std::vector<Vehicle::State> detected
   cost_ += front_buffer_cost_(front_buffer);
   cost_ += side_back_buffer_cost_(side_back_buffer);
   cost_ += collision_cost_(back_velocity_difference);
+}
+
+bool Lane::isSafe(Vehicle::State current, vector<Vehicle::State> sensor_inputs) {
+  bool safe = true;
+  for (auto& other : sensor_inputs) {
+    if (Accommodates(other)) {
+      if (SAFE_DISTANCE_BUFFER < abs(other.s - current.s) && SAFE_WIDTH_BUFFER < abs(other.d - current.d)) {
+        continue;
+      }
+
+      safe = false;
+      break;
+    }
+  }
+  return safe;
 }
 
 void Lane::NextTo(Lane* lane) {

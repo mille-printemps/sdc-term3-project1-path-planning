@@ -11,7 +11,8 @@ public:
   Lane(int id, double max_velocity, double min_velocity);
   ~Lane();
 
-  void Evaluate(Vehicle::State current, std::vector<Vehicle::State> detected);
+  void Evaluate(Vehicle::State current, std::vector<Vehicle::State> sensor_inputs);
+  bool isSafe(Vehicle::State current, std::vector<Vehicle::State> sensor_inputs);
   void NextTo(Lane* lane);
   bool Accommodates(Vehicle::State state) const;
 
@@ -42,6 +43,8 @@ private:
   static const double PREFERRED_DISTANCE_BUFFER;
   static const double VELOCITY_WARNING_BUFFER;
   static const double LANE_MARGIN;
+  static const double SAFE_DISTANCE_BUFFER;
+  static const double SAFE_WIDTH_BUFFER;
 
   int id_;
   double max_velocity_;

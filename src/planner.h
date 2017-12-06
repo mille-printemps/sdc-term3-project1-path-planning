@@ -25,8 +25,6 @@ private:
   static const double MIN_LANE_CHANGE_COST_DIFFERENCE;
   static const double MAX_LANE_CHANGE_COST;
   static const double MIN_LANE_CHANGE_VELOCITY;
-  static const double SAFE_DISTANCE_BUFFER;
-  static const double SAFE_WIDTH_BUFFER;
   static const double MAX_VELOCITY;
   static const double MIN_VELOCITY;
   static const double INITIAL_LANE;
@@ -42,7 +40,7 @@ private:
   // Private methods
   std::vector<Vehicle::State> GetSensorInputs(std::vector<std::vector<double> > sensor_fusion);
   void EvaluateSensorInputs(Vehicle::State current, std::vector<Vehicle::State> sensor_inputs);
-  void MayChangeLane(Vehicle::State current);
+  void MayChangeLane(Vehicle::State current, std::vector<Vehicle::State> sensor_inputs);
   void UpdateTrajectory(Vehicle::State current,
                         std::vector<Vehicle::State> sensor_inputs,
                         std::vector<double> previous_path_x,
