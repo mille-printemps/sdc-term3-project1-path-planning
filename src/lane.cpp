@@ -86,7 +86,7 @@ void Lane::Evaluate(Vehicle::State current, std::vector<Vehicle::State> sensor_i
   // Use the default values to calculate the cost if there are no vehicles ahead and behind within the range
   double front_buffer = numeric_limits<double>::max();
   double side_back_buffer = numeric_limits<double>::max();
-  double back_velocity_difference = numeric_limits<double>::max();
+  double back_velocity_difference = numeric_limits<double>::min();
   double front_velocity = max_velocity_;
   
   if (front != 0) {
