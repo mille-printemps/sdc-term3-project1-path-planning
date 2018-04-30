@@ -1,6 +1,6 @@
 # CarND-Path-Planning-Project
 
-A write-up of this project can be found (here)[./Model-Documentation.md]
+A write-up of this project can be found (here)[./ModelDocumentation.md]
 
 ---
 ## *The following is the original Udacity README*
